@@ -46,4 +46,13 @@ public class AuthorsController {
         authorsService.findByIdAndDelete(authorId);
     }
 
+    @PatchMapping("/{userId}/avatar")
+    public String uploadImage(@RequestParam("avatar") MultipartFile file) {
+        // "avatar" deve corrispondere ESATTAMENTE al campo del FormData nel quale il frontend inserirà l'immagine
+        // Se non corrisponde non troverò il file
+        System.out.println(file.getOriginalFilename());
+        System.out.println(file.getSize());
+        return this.authorsService.uploadAvatar(file);
+
+    }
 }

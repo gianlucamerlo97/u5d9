@@ -1,5 +1,7 @@
 package gianlucamerlo.u5d9.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import gianlucamerlo.u5d9.entities.Author;
 import gianlucamerlo.u5d9.exceptions.BadRequestException;
 import gianlucamerlo.u5d9.exceptions.NotFoundException;
@@ -11,12 +13,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @Service
 public class AuthorsService {
 
     @Autowired
     private AuthorsRepository authorsRepository;
+    @Autowired
+    private Cloudinary imgUploader;
 
     public Author save(NewAuthorsDTO payload) {
         this.authorsRepository.findByEmail(payload.email()).ifPresent(author -> {
@@ -51,5 +58,16 @@ public class AuthorsService {
         found.setDateOfBirth(body.getDateOfBirth());
         found.setAvatar(body.getAvatar());
         return authorsRepository.save(found);
+    }
+
+    public String uploadAvatar(MultipartFile file) {
+        try {
+            Map result = imgUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String imageURL = (String) result.get("url"); // Dalla risposta di Cloudinary leggo l'url.
+            // ... Qua dovreste aggiornare l'avatar dell'utente a DB!
+            return imageURL;
+        } catch (Exception e) {
+            throw new BadRequestException("Ci sono stati problemi nel salvataggio del file!");
+        }
     }
 }
