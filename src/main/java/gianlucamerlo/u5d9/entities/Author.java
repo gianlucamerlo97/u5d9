@@ -22,10 +22,10 @@ public class Author {
     private String name;
     private String surname;
     private String email;
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
     private String avatar;
 
-    public Author(String name, String surname, String email, String dateOfBirth) {
+    public Author(String name, String surname, String email, LocalDate dateOfBirth) {
         this.name = name;
         this.surname = surname;
         this.email = email;
